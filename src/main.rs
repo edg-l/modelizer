@@ -108,6 +108,7 @@ fn create_model() -> anyhow::Result<()> {
     main_struct.doc(&format!("Represents a row in the {} table", table_name));
     main_struct.derive("Debug");
     main_struct.derive("serde::Deserialize");
+    main_struct.derive("serde::Serialize");
     main_struct.derive("sqlx::FromRow");
 
     let mut main_impl = codegen::Impl::new(&struct_name);
@@ -293,26 +294,30 @@ fn create_model() -> anyhow::Result<()> {
     list_f.arg("pool", "&PgPool");
     list_f.arg("query", &format!("&{}Query", struct_name).to_pascal_case());
     list_f.line("let limit = query.limit.map_or(50, |f| f.clamp(0, 100));");
-    list_f.line("let offset = query.offset.map_or(0, |f| f.min(0));");
+    list_f.line("let offset = query.offset.map_or(0, |f| f.max(0));");
     list_f.line("let mut current_idx = 1i32;");
     list_f.line("let mut where_clause = String::new();");
 
     // TODO: need to create a query builder
 
     for field in &search_fields {
+        let equal_char = match field.r#type.as_str() {
+            "String" => "LIKE",
+            _ => "=",
+        };
         list_f.line(format!(
             r#"
-if query.{}.is_some() {{
+if query.{0}.is_some() {{
     if current_idx == 1 {{
         where_clause.push_str("WHERE ");
-        where_clause.push_str(&format!("{} = ${{}} ", current_idx));
+        where_clause.push_str(&format!("{1} {2} ${{}} ", current_idx));
     }} else {{
-        where_clause.push_str(&format!("OR {} = ${{}} ", current_idx));
+        where_clause.push_str(&format!("OR {1} {2} ${{}} ", current_idx));
     }}
     current_idx += 1; 
 }}
 "#,
-            field.name, field.db_name, field.db_name
+            field.name, field.db_name, equal_char
         ));
     }
 
