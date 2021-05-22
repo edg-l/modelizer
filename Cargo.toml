@@ -1,0 +1,16 @@
+[package]
+name = "modelizer"
+version = "0.1.0"
+authors = ["Edgar <git@edgarluque.com>"]
+edition = "2018"
+descrition = "Generates CRUD rust code for a database model (only sqlx supported for now)."
+license = "MIT"
+keywords = ["codegen", "sql", "sqlx", "crud"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+Inflector = "0.11.4"
+anyhow = "1.0.40"
+codegen = "0.1.3"
+dialoguer = "0.8.0"
