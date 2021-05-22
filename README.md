@@ -4,6 +4,7 @@ Generate rust code implementing the CRUD from a given database model.
 
 ## Example Run:
 
+```text
 Table name: post
 Struct name: Post
 Field name (empty to stop): id
@@ -32,6 +33,7 @@ Should 'created_at' be included in the new() function parameters? no
 Want to create a new struct using the fields added to new()? yes
 Sub-struct name: PostPayload
 Generate From<PostPayload> for Post ? yes
+```
 
 ```rust
 /// Represents a row in the post table

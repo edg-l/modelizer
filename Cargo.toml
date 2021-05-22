@@ -1,6 +1,6 @@
 [package]
 name = "modelizer"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Edgar <git@edgarluque.com>"]
 edition = "2018"
 description = "Generates CRUD rust code for a database model (only sqlx supported for now)."
